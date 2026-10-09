@@ -1,0 +1,52 @@
+import argparse
+from pathlib import Path
+
+from src.image_processor.core import ImageProcessor, ProcessingOptions
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="Professional image processing CLI")
+    parser.add_argument("--input", required=True, help="Path to input image")
+    parser.add_argument("--output-dir", default="output", help="Directory for processed outputs")
+    parser.add_argument("--output-name", default="processed_image.png", help="Output filename")
+    parser.add_argument("--grayscale", action="store_true", help="Convert image to grayscale")
+    parser.add_argument("--resize-width", type=int, default=None, help="Target width in pixels")
+    parser.add_argument("--resize-height", type=int, default=None, help="Target height in pixels")
+    parser.add_argument("--rotate", type=int, default=0, help="Rotation angle in degrees")
+    parser.add_argument("--brightness", type=float, default=1.0, help="Brightness multiplier")
+    parser.add_argument("--contrast", type=float, default=1.0, help="Contrast multiplier")
+    parser.add_argument("--blur", type=float, default=0.0, help="Blur radius")
+    parser.add_argument("--sharpen", action="store_true", help="Apply sharpen filter")
+    parser.add_argument("--edge", action="store_true", help="Apply edge detection")
+    parser.add_argument("--threshold", type=int, default=None, help="Binary threshold value")
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
+    processor = ImageProcessor(output_dir=args.output_dir)
+
+    options = ProcessingOptions(
+        grayscale=args.grayscale,
+        resize_width=args.resize_width,
+        resize_height=args.resize_height,
+        rotate=args.rotate,
+        brightness=args.brightness,
+        contrast=args.contrast,
+        blur=args.blur,
+        sharpen=args.sharpen,
+        edge=args.edge,
+        threshold=args.threshold,
+    )
+
+    output_path = processor.process_file(
+        input_path=args.input,
+        output_name=args.output_name,
+        options=options,
+    )
+
+    print(f"Image processed successfully: {output_path}")
+
+
+if __name__ == "__main__":
+    main()
